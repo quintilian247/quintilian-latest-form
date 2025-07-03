@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register – The Quintilian</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+  <div class="max-w-3xl mx-auto p-6 bg-white shadow-md mt-10 rounded-xl">
+    <h1 class="text-2xl font-bold mb-4 text-center">Register for a Course – The Quintilian</h1>
+    <form id="registrationForm" class="space-y-4" action="https://formsubmit.co/helloquintilian@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="New Quintilian Course Registration">
+      <input type="hidden" name="_captcha" value="false">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" name="fullName" placeholder="Full Name" required class="border p-2 rounded w-full">
+        <input type="email" name="email" placeholder="Email Address" required class="border p-2 rounded w-full">
+        <input type="tel" name="phone" placeholder="Phone Number" required class="border p-2 rounded w-full">
+        <input type="text" name="address" placeholder="Home Address" required class="border p-2 rounded w-full">
+      </div>
+      <label class="block font-semibold">How did you hear about us?</label>
+      <select name="referral" class="border p-2 rounded w-full" required>
+        <option value="">Select</option>
+        <option>Instagram</option>
+        <option>Facebook</option>
+        <option>WhatsApp</option>
+        <option>Referral</option>
+        <option>Google/Search</option>
+        <option>Event/Workshop</option>
+        <option>Other</option>
+      </select>
+
+      <label class="block font-semibold mt-4">Select a Course:</label>
+      <select name="course" id="courseSelect" class="border p-2 rounded w-full" required>
+        <option value="">-- Choose a Course --</option>
+        <option value="59000">Communications (Online) – ₦59,000</option>
+        <option value="103000">Communications (Physical) – ₦103,000</option>
+        <option value="49000">English Proficiency – Semester 1 – ₦49,000</option>
+        <option value="47000">English Proficiency – Semester 2 – ₦47,000</option>
+        <option value="35000">English Proficiency – Semester 3 – ₦35,000</option>
+      </select>
+
+      <input type="hidden" name="paymentRef" id="paymentRef">
+
+      <button type="button" onclick="payWithPaystack()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+        Submit & Pay
+      </button>
+    </form>
+  </div>
+
+  <script>
+    function payWithPaystack() {
+      const form = document.getElementById('registrationForm');
+      const amount = document.getElementById('courseSelect').value;
+      const email = form.email.value;
+      const fullName = form.fullName.value;
+
+      if (!amount || !email || !fullName) {
+        alert("Please fill all required fields.");
+        return;
+      }
+
+      const handler = PaystackPop.setup({
+        key: 'pk_live_284fff1bea4f9e084c060add89c5c3672b52f9fd',
+        email: email,
+        amount: parseInt(amount) * 100,
+        currency: 'NGN',
+        ref: 'QT' + Math.floor((Math.random() * 1000000000) + 1),
+        callback: function(response) {
+          document.getElementById('paymentRef').value = response.reference;
+          alert('Payment successful! Reference: ' + response.reference);
+          form.submit();
+        },
+        onClose: function() {
+          alert('Transaction cancelled.');
+        }
+      });
+
+      handler.openIframe();
+    }
+  </script>
+</body>
+</html>
